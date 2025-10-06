@@ -11,12 +11,12 @@ import plotly.io as pio
 
 st.set_page_config(
     page_title="Encuestas de Opinión • Costa Rica",
-    page_icon="./TDP_Symbol_Main.svg",
+    page_icon="./TDP_Logo_White.svg",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-LOGO_PATH = "./circle-white.svg"   # ← tu logo
+LOGO_PATH = "./TDP_Logo_White.svg"   # ← tu logo
 CSV_PATH  = "./encuestas_cr.csv"  # ← tu CSV
 
 # Utilidad: imagen a DataURI (para <img src="..."> dentro de HTML)
