@@ -41,7 +41,6 @@ if not login(logo_data_uri, "Encuestas de Opinión - Costa Rica"):
     st.stop()
 
 # ================== ESTILOS (UN SOLO BLOQUE) ==================
-# ================== ESTILOS (UN SOLO BLOQUE) ==================
 st.markdown(f"""
 <style>
 /* 1) Cargar la fuente local */
@@ -373,27 +372,47 @@ df_conf_all["Periodo_str"] = df_conf_all["Periodo"].dt.strftime("%Y-%m")
 # ---------- FILA 1: dos pies del periodo seleccionado ----------
 with col1:
     with st.container(border=True):
-        st.markdown("##### Simpatía Política y Confianza en el Gobierno")
-        c1, c2 = st.columns([0.7, 1.3])
+    st.markdown("##### Simpatía Política y Confianza en el Gobierno")
+
+    # Selector (toggle) para elegir qué mostrar
+    try:
+        # Streamlit >= 1.38
+        elegido = st.segmented_control(
+            "", options=["Simpatía", "Confianza"], default="Simpatía",
+            key="toggle_sim_conf", label_visibility="collapsed"
+        )
+    except Exception:
+        # Fallback si tu versión no tiene segmented_control
+        elegido = st.radio(
+            "", options=["Simpatía", "Confianza"], index=0,
+            key="toggle_sim_conf_radio", label_visibility="collapsed", horizontal=True
+        )
+
+    c1, c2 = st.columns([0.7, 1.3])
+
+    # ===========================
+    #       SIMPATÍA
+    # ===========================
+    if elegido == "Simpatía":
         with c1:
             st.markdown("Simpatía Política")
             if not df_sim_per.empty:
                 fig_sim_pie = px.pie(
                     df_sim_per, names="Item", values="Valor",
-                    hole=0.2, color_discrete_sequence=["#E57373", "#8FC97E" ]
+                    hole=0.2, color_discrete_sequence=["#E57373", "#8FC97E"]
                 )
                 fig_sim_pie.update_traces(textinfo="label+percent", textposition="inside")
                 fig_sim_pie.update_layout(
-                    showlegend=False, height=240, margin=dict(l=0, r=0, t=10, b=10),
+                    showlegend=False, height=240,
+                    margin=dict(l=0, r=0, t=10, b=10),
                     plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)"
                 )
                 st.plotly_chart(fig_sim_pie, use_container_width=True)
             else:
                 st.info("Sin datos de simpatía en este periodo.")
+
         with c2:
-            # --- HISTÓRICO SIMPATÍA (una barra dividida por periodo) ---
             if not df_sim_all.empty:
-                # df_sim_all debe tener Periodo_str, Item, Valor
                 fig_sim_hist = bar_100_stacked(
                     df_long=df_sim_all,
                     x_col="Periodo_str", y_col="Valor", color_col="Item",
@@ -403,8 +422,7 @@ with col1:
                 fig_sim_hist.update_layout(
                     height=300,
                     margin=dict(l=0, r=0, t=10, b=40),
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                     xaxis_title=None, yaxis_title="%",
                     legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="center"),
                     xaxis=dict(tickangle=-30)
@@ -413,15 +431,17 @@ with col1:
             else:
                 st.info("Sin serie histórica de simpatía.")
 
-        # ---------- FILA 2: dos barras apiladas con histórico ----------
-        c3, c4 = st.columns([0.7,1.3])
-
-        with c3:
+    # ===========================
+    #       CONFIANZA
+    # ===========================
+    else:
+        with c1:
             st.markdown("Confianza en el gobierno")
             if not df_conf_per.empty:
                 fig_conf_pie = px.pie(
                     df_conf_per, names="Item", values="Valor",
-                    hole=0.2, color_discrete_sequence=["#E57373", "#FFD54F", "#64B5F6", "#81C784"]
+                    hole=0.2,
+                    color_discrete_sequence=["#E57373", "#FFD54F", "#64B5F6", "#81C784"]
                 )
                 fig_conf_pie.update_traces(textinfo="label+percent", textposition="inside")
                 fig_conf_pie.for_each_trace(
@@ -436,44 +456,40 @@ with col1:
                     ])
                 )
                 fig_conf_pie.update_layout(
-                    showlegend=False, height=293, margin=dict(l=0, r=0, t=10, b=10),
+                    showlegend=False, height=293,
+                    margin=dict(l=0, r=0, t=10, b=10),
                     plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)"
                 )
-                st.plotly_chart(fig_conf_pie, use_container_width=True)  # <-- aquí el correcto
+                st.plotly_chart(fig_conf_pie, use_container_width=True)
             else:
                 st.info("Sin datos de confianza en este periodo.")
 
-            with c4:
-                if not df_conf_all.empty:
-                    fig_conf_hist = bar_100_stacked(
-                        df_long=df_conf_all,
-                        x_col="Periodo_str", y_col="Valor", color_col="Item",
-                        color_order=[
-                            "Ninguna confianza","Poca confianza","Alguna confianza","Mucha confianza"
-                        ],
-                        color_map={
-                            "Ninguna confianza":"#E57373",
-                            "Poca confianza":"#FFD54F",
-                            "Alguna confianza":"#64B5F6",
-                            "Mucha confianza":"#81C784",
-                        },
-                    )
-                    fig_conf_hist.update_layout(
-                        height=320,
-                        margin=dict(l=0, r=0, t=10, b=30),
-                        plot_bgcolor="rgba(0,0,0,0)",
-                        paper_bgcolor="rgba(0,0,0,0)",
-                        xaxis_title=None,       # quita título eje X
-                        yaxis_title="%",        # cambia título eje Y
-                        legend=dict(
-                            orientation="h",
-                            yanchor="top", y=-0.2,
-                            xanchor="center"
-                        )
-                    )
-                    st.plotly_chart(fig_conf_hist, use_container_width=True, theme=None)
-                else:
-                    st.info("Sin serie histórica de confianza.")
+        with c2:
+            if not df_conf_all.empty:
+                fig_conf_hist = bar_100_stacked(
+                    df_long=df_conf_all,
+                    x_col="Periodo_str", y_col="Valor", color_col="Item",
+                    color_order=[
+                        "Ninguna confianza","Poca confianza","Alguna confianza","Mucha confianza"
+                    ],
+                    color_map={
+                        "Ninguna confianza":"#E57373",
+                        "Poca confianza":"#FFD54F",
+                        "Alguna confianza":"#64B5F6",
+                        "Mucha confianza":"#81C784",
+                    },
+                )
+                fig_conf_hist.update_layout(
+                    height=320,
+                    margin=dict(l=0, r=0, t=10, b=30),
+                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                    xaxis_title=None, yaxis_title="%",
+                    legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="center")
+                )
+                st.plotly_chart(fig_conf_hist, use_container_width=True, theme=None)
+            else:
+                st.info("Sin serie histórica de confianza.")
+
 
     with col2:
         with st.container(border=True):
