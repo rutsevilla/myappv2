@@ -24,8 +24,8 @@ logo_data_uri = img_to_data_uri(LOGO_PATH)
 
 # --- (A) Login gate: si no hay sesión, no se muestra el tablero ---
 # Usa tu logo_data_uri si quieres que aparezca en la tarjeta de login
-# if not login(logo_data_uri, "Encuestas de Opinión - Costa Rica"):
-#     st.stop()
+if not login(logo_data_uri, "Encuestas de Opinión - Costa Rica"):
+    st.stop()
 
 # --- (B) Ya hay sesión: muestra user-box y el tablero ---
 # user_header()
