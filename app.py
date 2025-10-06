@@ -11,7 +11,7 @@ import plotly.io as pio
 
 st.set_page_config(
     page_title="Encuestas de Opinión • Costa Rica",
-    page_icon="./TDP_Logo_White.svg",
+    page_icon="./circle-white.svg",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -24,8 +24,8 @@ logo_data_uri = img_to_data_uri(LOGO_PATH)
 
 # --- (A) Login gate: si no hay sesión, no se muestra el tablero ---
 # Usa tu logo_data_uri si quieres que aparezca en la tarjeta de login
-# if not login(logo_data_uri, "Encuestas de Opinión - Costa Rica"):
-#     st.stop()
+if not login(logo_data_uri, "Encuestas de Opinión - Costa Rica"):
+    st.stop()
 
 # --- (B) Ya hay sesión: muestra user-box y el tablero ---
 # user_header()
@@ -39,7 +39,6 @@ HEADER_A     = "#2E498A"   # Degradado header - inicio
 HEADER_B     = "#2E498A"   # Degradado header - fin
 CARD_BG      = "rgba(255,255,255,0.10)"  # fondo semitransparente para .box
 TEXT_SOFT    = "#EAF6FF"
-
 
 
 # ================== ESTILOS (UN SOLO BLOQUE) ==================
