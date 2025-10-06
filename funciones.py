@@ -61,6 +61,51 @@ def user_header():
 
 
 # ================== UTILIDADES DE DATOS ==================
+def _find_section(df, needle: str):
+    """Devuelve el nombre exacto de la sección que contenga 'needle' (en minúsculas)."""
+    needle = needle.lower()
+    for s in df["Seccion"].dropna().unique():
+        if needle in str(s).lower():
+            return s
+    return None
+
+def render_valoracion(df, df_per, seccion_label: str, titulo_bloque: str):
+    """Pinta Resultados (barras) + Evolución (línea) con el estilo actual."""
+    st.markdown(f"#### {titulo_bloque}")
+
+    # --- Resultados del periodo seleccionado ---
+    df_val_per = df_per[df_per["Seccion"] == seccion_label].copy()
+    if df_val_per.empty:
+        fig_resultados = px.bar(pd.DataFrame({"Respuesta": [], "Porcentaje": []}),
+                                x="Porcentaje", y="Respuesta")
+    else:
+        normalizador = limpiar_txt if 'limpiar_txt' in globals() else lambda s: str(s).strip().lower()
+        df_val_per["item_norm"] = df_val_per["Item"].map(lambda s: normalizador(s) if pd.notna(s) else None)
+        mapa = {
+            "positivo":"Positivos","positiva":"Positivos","positivos":"Positivos","positivas":"Positivos",
+            "neutral":"Neutros","neutra":"Neutros","neutros":"Neutros","neutras":"Neutros",
+            "negativo":"Negativos","negativa":"Negativos","negativos":"Negativos","negativas":"Negativos",
+        }
+        df_val_per["grupo"] = df_val_per["item_norm"].map(mapa)
+        res = (df_val_per.dropna(subset=["grupo"]).groupby("grupo", as_index=False)["Valor"].sum())
+        res = (res.set_index("grupo").reindex(["Positivos","Neutros","Negativos"]).fillna(0)
+                    .reset_index().rename(columns={"grupo":"Respuesta","Valor":"Porcentaje"}))
+        res["Porcentaje"] = pd.to_numeric(res["Porcentaje"], errors="coerce").fillna(0)
+
+        fig_resultados = px.bar(
+            res, x="Porcentaje", y="Respuesta", orientation="h",
+            color="Respuesta",
+            color_discrete_map={"Positivos": PRIMARY, "Neutros": "#8FBAD3", "Negativos": "#F07B7B"},
+            text="Porcentaje"
+        )
+        fig_resultados.update_traces(texttemplate="%{x:.1f}%", textposition="outside")
+        fig_resultados.update_layout(
+            height=275, showlegend=False, margin=dict(l=0,r=0,t=0,b=0),
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            xaxis_title=None, yaxis_title=None
+        )
+        fig_resultados.update_xaxes(ticksuffix="%")
+
 def limpiar_txt(s):
     """Minúsculas, sin acentos y sin dobles espacios, para comparar secciones/items robustamente."""
     s = unidecode(str(s)).strip().lower()
