@@ -372,7 +372,7 @@ with colR:
             )
             fig_resultados.update_traces(texttemplate="%{x:.1f}%", textposition="outside")
             fig_resultados.update_layout(
-                height=225, showlegend=False, margin=dict(l=0,r=0,t=0,b=0),
+                height=226, showlegend=False, margin=dict(l=0,r=0,t=0,b=0),
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 xaxis_title=None, yaxis_title=None
             )
@@ -398,7 +398,7 @@ with colR:
                 color_discrete_map={"positiva":PRIMARY,"neutral":"#8FBAD3","negativa":"#F07B7B"},
             )
             fig_evol.update_layout(
-                height=225, margin=dict(l=0,r=0,t=8,b=0),
+                height=226, margin=dict(l=0,r=0,t=8,b=0),
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 xaxis_title=None, yaxis_title=None, legend_title_text=None
             )
