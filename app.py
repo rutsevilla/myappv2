@@ -372,7 +372,7 @@ with colR:
             )
             fig_resultados.update_traces(texttemplate="%{x:.1f}%", textposition="outside")
             fig_resultados.update_layout(
-                height=220, showlegend=False, margin=dict(l=0,r=0,t=0,b=0),
+                height=222, showlegend=False, margin=dict(l=0,r=0,t=0,b=0),
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 xaxis_title=None, yaxis_title=None
             )
