@@ -451,7 +451,7 @@ with colR:
                 figp = px.bar(df_pp, x="Valor", y="Item", orientation="h",
                               text="Valor", color="Valor", color_continuous_scale="Blues")
                 figp.update_traces(texttemplate="%{x:.1f}%", textposition="outside")
-                figp.update_layout(height=260, coloraxis_showscale=False,
+                figp.update_layout(height=261, coloraxis_showscale=False,
                                    margin=dict(l=0,r=0,t=8,b=0), xaxis_title='%', yaxis_title=None,
                                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")
                 st.plotly_chart(figp, use_container_width=True)
